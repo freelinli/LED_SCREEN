@@ -6,6 +6,20 @@
 #define  FLASH_WriteAddress     0x00000
 #define  FLASH_SectorToErase    FLASH_WriteAddress
 
+
+typedef struct Ws2812b_Config{
+  u8 frames_h;                  // 1    帧数 高位
+  u8 frames_l;                  // 2    帧数 低位
+  u8 last_time_h;               // 3    每帧持续时间 高位
+  u8 last_time_l;               // 4    每帧持续时间 低位
+  u8 data_offset_h;             // 5    数据相对ox0的偏移地址 高位
+  u8 data_offset_l;             // 6    数据相对ox0的偏移地址 低位
+  u8 led_pixel;                 // 7    led的像素点个数
+  u8 save;
+
+}Ws2812b_Config_t;
+
+
 /* Private typedef -----------------------------------------------------------*/
 #define SPI_FLASH_PageSize          256
 #define SPI_FLASH_PerWritePageSize  256
@@ -48,6 +62,7 @@ void SPI_FLASH_WriteEnable(void);
 void SPI_FLASH_WaitForWriteEnd(void);
 
 void W25x16_Test(void);
+void W25x16_Save_Ws2812b_Config(void);
 
 #endif 
 

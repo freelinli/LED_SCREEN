@@ -38,11 +38,20 @@ ShowSource=1
 [Simulator]
 Freq=16000000
 [DebugChecksum]
-Checksum=-512567785
+Checksum=615810557
 [CallStack]
 ShowArgs=0
 [Disassembly]
 MixedMode=1
+[struct_types]
+Fmt0=Ws2812b_Config_t-data_offset_h	3	0
+Fmt1=Ws2812b_Config_t-data_offset_l	3	0
+Fmt2=Ws2812b_Config_t-frames_h	3	0
+Fmt3=Ws2812b_Config_t-frames_l	3	0
+Fmt4=Ws2812b_Config_t-last_time_h	3	0
+Fmt5=Ws2812b_Config_t-last_time_l	3	0
+Fmt6=Ws2812b_Config_t-led_pixel	3	0
+Fmt7=Ws2812b_Config_t-save	3	0
 [watch_formats]
 Fmt0={W}1:Temp	4	0
 [DataSample]
@@ -59,11 +68,9 @@ LoggingEnabled=_ 0
 LogFile=_ ""
 [Breakpoints]
 Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\BSP}.39.2" 0 0 0 0 "" 0 ""
-Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\USR\main.c}.312.3" 1 0 0 0 "" 0 ""
-Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\BSP\led.c}.195.7" 0 0 0 0 "" 0 ""
-Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\BSP\led.c}.198.7" 0 0 0 0 "" 0 ""
-Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\USR\main.c}.276.9" 1 0 0 0 "" 0 ""
-Count=5
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\BSP\led.c}.195.7" 0 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\BSP\led.c}.198.7" 0 0 0 0 "" 0 ""
+Count=3
 [Aliases]
 A0=_ "C:\Users\lijinnan\Desktop\PKT8S01_DEMO\LIB\src\stm8s_clk.c" ""
 A1=_ "C:\Users\lijinnan\Desktop\PKT8S01_DEMO\LIB\src\stm8s_gpio.c" ""
