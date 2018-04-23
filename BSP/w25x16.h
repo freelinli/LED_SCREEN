@@ -7,15 +7,15 @@
 #define  FLASH_SectorToErase    FLASH_WriteAddress
 
 
-typedef struct Ws2812b_Config{
-  u8 frames_h;                  // 1    帧数 高位
-  u8 frames_l;                  // 2    帧数 低位
-  u8 last_time_h;               // 3    每帧持续时间 高位
-  u8 last_time_l;               // 4    每帧持续时间 低位
-  u8 data_offset_h;             // 5    数据相对ox0的偏移地址 高位
-  u8 data_offset_l;             // 6    数据相对ox0的偏移地址 低位
-  u8 led_pixel;                 // 7    led的像素点个数
-  u8 save;
+ typedef struct Ws2812b_Config{
+   u8 data_offset_h;             // 1    数据相对ox0的偏移地址 高位
+   u8 data_offset_m;             //  2   数据相对ox0的偏移地址 中位
+  u8 data_offset_l;             // 3    数据相对ox0的偏移地址 低位
+  u8 frames_h;                  // 4    帧数 高位
+  u8 frames_l;                  // 5    帧数 低位
+  u8 led_pixel;                 // 6    led的像素点个数
+  u8 last_time_h;               // 7    每帧持续时间 高位
+  u8 last_time_l;               // 8    每帧持续时间 低位
 
 }Ws2812b_Config_t;
 
@@ -59,6 +59,7 @@ u8 SPI_FLASH_ReadByte(void);
 u8 SPI_FLASH_SendByte(uint8_t byte);
 
 void SPI_FLASH_WriteEnable(void);
+void SPI_FLASH_WriteDisable(void);
 void SPI_FLASH_WaitForWriteEnd(void);
 
 void W25x16_Test(void);

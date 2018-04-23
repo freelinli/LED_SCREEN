@@ -34,13 +34,13 @@
 
 #include "stm8s_uart1.h"
 #include "uart1.h" 
-    
+#include <string.h>
 unsigned int flag_tim1_time = 0;
 
 
 u8 RxBuffer[RxBufferSize];
 u16 UART_RX_NUM=0;
-
+u8  flag_uart_start_recv = 0;
 
     
 /** @addtogroup Template_Project
@@ -367,38 +367,15 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
   */
  INTERRUPT_HANDLER(UART1_RX_IRQHandler, 18)
  {
-    /* In order to detect unexpected events during development,
-       it is recommended to set a breakpoint on the following instruction.
-    */
-     u8 Res;
     if(UART1_GetITStatus(UART1_IT_RXNE )!= RESET)  
-    {/*接收中断(接收到的数据必须是0x0d 0x0a结尾)*/
-	Res =UART1_ReceiveData8();
-        /*(USART1->DR);读取接收到的数据,当读完数据后自动取消RXNE的中断标志位*/
-	if(( UART_RX_NUM&0x80)==0)/*接收未完成*/
-	{
-	    if( UART_RX_NUM&0x40)/*接收到了0x0d*/
-		{
-		  if(Res!=0x0a) 
-                    UART_RX_NUM=0;/*接收错误,重新开始*/
-		  else  
-                    UART_RX_NUM|=0x80;	/*接收完成了 */
-		}
-            else /*还没收到0X0D*/
-              {	
-                if(Res==0x0d) 
-                  UART_RX_NUM|=0x40;
-                else
-                  {
-                    RxBuffer[ UART_RX_NUM&0X3F]=Res ;
-                     UART_RX_NUM++;
-                      if( UART_RX_NUM>=RxBufferSize) UART_RX_NUM=0;/*接收数据错误,重新开始接收*/  
-                  }		 
-	  }
-	}  		 
+    {
+        RxBuffer[UART_RX_NUM ++] = UART1_ReceiveData8();
+        if(UART_RX_NUM > RxBufferSize)
+        {
+          UART_RX_NUM = 0;
+          memset(RxBuffer, 0, RxBufferSize);
+        }
     }
-   
-   
    
  }
 

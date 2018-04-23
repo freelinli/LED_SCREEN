@@ -16,4 +16,7 @@
 #include "spi.h"
 
 #include "stm8s_iwdg.h"
+
+
+#include <string.h>
 #endif

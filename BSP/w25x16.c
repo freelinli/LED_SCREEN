@@ -12,16 +12,6 @@ extern void WS2812_send_DATA(uint8_t (*color)[3], uint16_t len);
 
 
 
-Ws2812b_Config_t Ws2812b_Config_data = {
-  .frames_h = 0,                // 1    帧数 高位
-  .frames_l = 2,                  // 2    帧数 低位
-  .last_time_h = 0,              // 3    每帧持续时间 高位 ms
-  .last_time_l = 200,               // 4    每帧持续时间 低位 ms
-  .data_offset_h = 0,            // 5    数据相对ox0的偏移地址 高位
-  .data_offset_l = 16,            // 6    数据相对ox0的偏移地址 低位
-  .led_pixel = 40,                 // 7    led的像素点个数
-  .save =66,
-};
 
 
 
@@ -222,6 +212,15 @@ void SPI_FLASH_WriteEnable(void)
   W25Q_CS_H;
 }
 
+void SPI_FLASH_WriteDisable(void)
+{
+  W25Q_CS_L;
+  SPI_FLASH_SendByte(W25X_WriteDisable);
+  W25Q_CS_H;
+}
+
+
+
 void SPI_FLASH_WaitForWriteEnd(void)
 {
   uint8_t FLASH_Status = 0;
@@ -286,15 +285,15 @@ void W25x16_Test(void)
 
 void W25x16_Save_Ws2812b_Config(void) // 应该以传参方式 todo
 {
-    Ws2812b_Config_data.save = 66;
+  
     SPI_FLASH_BulkErase();//全片清空
     
-    SPI_FLASH_BufferWrite((u8 *)&Ws2812b_Config_data,FLASH_SectorToErase,sizeof(Ws2812b_Config_t));	
+    //SPI_FLASH_BufferWrite((u8 *)&Ws2812b_Config_data,FLASH_SectorToErase,sizeof(Ws2812b_Config_t));	
 
-    memset(&Ws2812b_Config_data,0,sizeof(Ws2812b_Config_t));
+    //memset(&Ws2812b_Config_data,0,sizeof(Ws2812b_Config_t));
      
-    SPI_FLASH_BufferRead((u8 *)&Ws2812b_Config_data,FLASH_SectorToErase, sizeof(Ws2812b_Config_t));
-    Ws2812b_Config_data.save = 67;
+    //SPI_FLASH_BufferRead((u8 *)&Ws2812b_Config_data,FLASH_SectorToErase, sizeof(Ws2812b_Config_t));
+    //Ws2812b_Config_data.save = 67;
 }
 
 
