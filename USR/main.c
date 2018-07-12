@@ -26,6 +26,7 @@ extern u16 UART_RX_NUM;
 
 struct FSM_t
 {
+    unsigned int flag_switch;
     unsigned int flag_1ms;
     unsigned int flag_5ms;
     unsigned int flag_10ms;
@@ -45,12 +46,21 @@ u16 adc_value = 0;
 u8  *point_68;
 u8  switch_get_eeprom = 0;
 Ws2812b_Config_t Ws2812b_Config_data;
+Ws2812b_Config_ture_t Ws2812b_Config_data_ture;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
 void Bsp_Init(void);
 
+void Ws2812_Config_get(void)
+{
+    Ws2812b_Config_data_ture.data_offset = (Ws2812b_Config_data.data_offset_h << 16) + (Ws2812b_Config_data.data_offset_m << 8) + Ws2812b_Config_data.data_offset_l;
+    Ws2812b_Config_data_ture.frames = (Ws2812b_Config_data.frames_h << 8) + Ws2812b_Config_data.frames_l;
+    Ws2812b_Config_data_ture.last_time = (Ws2812b_Config_data.last_time_h << 8) + Ws2812b_Config_data.last_time_l;
+    Ws2812b_Config_data_ture.led_pixel = Ws2812b_Config_data.led_pixel;
+
+}
 
 unsigned char checkSumData(u8 *showdata, int temp_hex_len )  //校验和
 {
@@ -93,8 +103,11 @@ int frames_decode(u8 *data)
     {
         checkdata += *(data + i++);
     }
-    if( *(data + checkdata_len) != checkdata) //校验是否正确
-        return -1;
+    if( *(data + checkdata_len) != checkdata) {//校验是否正确
+      UART1_SendByte(checkdata);
+      UART1_SendByte(checkdata_len);
+      return -1;
+    }
 
 
     backword[1] = *(data + 1);
@@ -124,6 +137,7 @@ int frames_decode(u8 *data)
         */
 
         memcpy(&Ws2812b_Config_data, data + 3, 8);
+        Ws2812_Config_get();
         SPI_FLASH_BufferWrite((u8 *)&Ws2812b_Config_data, FLASH_SectorToErase, sizeof(Ws2812b_Config_t));
         UART1_SendString( backword, 3);
         break;
@@ -153,9 +167,10 @@ int frames_decode(u8 *data)
             0x68  0x03  0x03  0x000000       校验           0x16
         */
 
+        SPI_FLASH_WriteEnable();
         SPI_FLASH_BufferRead(data + 6, (data[3] << 16) + (data[4] << 8)  + data[5] , Ws2812b_Config_data.led_pixel * 3);
 
-        frames_code(data, 2, NULL, Ws2812b_Config_data.led_pixel * 3 + 3);
+        frames_code(data, 3, data + 3 , Ws2812b_Config_data.led_pixel * 3 + 3);
 
         UART1_SendString( data, data[2] + 5 );
 
@@ -186,17 +201,23 @@ int main(void)
 {
     /* Infinite loop */
 
-    struct FSM_t FSM_data = {0, 0, 0, 0, 0};
-    u16 temp_move;
+    struct FSM_t FSM_data = {0, 0, 0, 0, 0, 0};
+    u16 temp_move, i = 0;
+
 
     /*设置内部时钟16M为主时钟*/
 
     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);
 
+
     Bsp_Init();
     /*!<Set High speed internal clock  */
 
+    
+  //  RGB_data = (u8 *)malloc(Ws2812b_Config_data_ture.led_pixel * 3);
+    
 
+    
     while (1)
     {
         /*  添加你的代码  */
@@ -204,6 +225,18 @@ int main(void)
 
         ++FSM_data.flag_1ms;
 
+        if(++FSM_data.flag_switch > Ws2812b_Config_data_ture.last_time) {
+        
+          FSM_data.flag_switch  = 0;
+          
+          memset(RxBuffer, 0, RxBufferSize);
+          SPI_FLASH_BufferRead(RxBuffer, Ws2812b_Config_data_ture.data_offset + Ws2812b_Config_data_ture.led_pixel * 3 * i, Ws2812b_Config_data_ture.led_pixel * 3);
+          
+          UART1_SendString( RxBuffer, Ws2812b_Config_data_ture.led_pixel * 3 );
+          if( ++i >=  Ws2812b_Config_data_ture.frames)
+            i = 0;
+        
+        }
         if(FSM_data.flag_1ms % 5  == 0) // per 5ms once
         {
 
@@ -237,41 +270,15 @@ int main(void)
                 key_status_all.shake_key_status = Shake_Key_Scan(Shake_Key_Port, Shake_Key_Pin);
                 if(key_status_all.shake_key_status == 1)
                 {
-                    LED1(0);
+                    //LED1(0);
                 }
                 else  if(key_status_all.shake_key_status == 2)
                 {
-                    LED1(1);
+                    //LED1(1);
                 }
 
             }
-
-
-            if(UART_RX_NUM > 4)
-            {
-                temp_move = 0;
-                while(temp_move < UART_RX_NUM)
-                {
-                    if(RxBuffer[temp_move] == 0x68)
-                    {
-                        if(frames_decode(RxBuffer + temp_move) > 0)
-                        {
-                            UART_RX_NUM = 0;
-                            memset(RxBuffer, 0, RxBufferSize);
-                            break;
-                        }
-                    }
-                    temp_move++;
-
-                }
-            }
-
-
-            if(switch_get_eeprom  == 0) //非下载状态下才可以进行led闪烁
-            {
-
-
-            }
+            
             //-------------------------------------------------------------------------- 5ms end
 
             if(FSM_data.flag_1ms % 10  == 0) // per 10ms once
@@ -288,7 +295,7 @@ int main(void)
                     if(FSM_data.flag_1ms % 1000  == 0) // per 1000ms once
                     {
                         FSM_data.flag_1ms = 0;
-                        // LED1_TOGGLE;
+                        LED1_TOGGLE;
                     }
                 }
             }
@@ -308,17 +315,66 @@ int main(void)
 
 void Bsp_Init(void)  //硬件初始化区域
 {
+    struct FSM_t FSM_data = {0, 0, 0, 0, 0};
+    u16 temp_move;
+
+  
+ //   delay_ms(500);//延时1秒
+      SPI_Configation();
+   
     Uart_Init(); // 115200
     UART1_SendString( "\r\n this is a demo \r\n", sizeof("\r\n this is a demo \r\n") );
+    
+ 
     //  USART1_printf( "\r\n this is a demo \r\n" );
     Tim1_Init();
-
-    SPI_Configation();
-    RGB_LED_Init();
     __enable_interrupt();//中断使能
+    
+    
+   // switch_get_eeprom = 1; // just for debug
+       SPI_FLASH_BufferRead((u8 *)&Ws2812b_Config_data, FLASH_SectorToErase, sizeof(Ws2812b_Config_t)); // 初始化读取信息
+    Ws2812_Config_get();
+    
+
+
+    while(1)
+    {
+       ++FSM_data.flag_1ms;
+      if(UART_RX_NUM > 4)
+            {
+                temp_move = 0;
+                while(temp_move < UART_RX_NUM)
+                {
+                    if(RxBuffer[temp_move] == 0x68)
+                    {
+                        if(frames_decode(RxBuffer + temp_move) > 0)
+                        {
+                            UART_RX_NUM = 0;
+                            memset(RxBuffer, 0, RxBufferSize);
+                            break;
+                        }
+                    }
+                    temp_move++;
+
+                }
+            }
+      
+      if (FSM_data.flag_1ms > 3001) 
+        FSM_data.flag_1ms =  3001;
+      if((switch_get_eeprom == 0) &&(FSM_data.flag_1ms > 3000)) // 未接受到数据  且 时间超时时间到，则退出
+        break;
+     
+      
+        while(flag_tim1_time == 0);
+        flag_tim1_time = 0;
+
+    }
+
+    RGB_LED_Init();
+
     //  IWDOG_Init();
 
-    W25x16_Test();
+    //W25x16_Test();
     // W25x16_Save_Ws2812b_Config();
 
     // IWDG_ReloadCounter();
@@ -327,7 +383,7 @@ void Bsp_Init(void)  //硬件初始化区域
     Shake_Key_Init();
     ADC1_Config();
 
-    delay_ms(1000);//延时1秒
+
 
     //        while(1){
     //          delay_ms(400);//延时1秒

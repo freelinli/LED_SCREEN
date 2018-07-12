@@ -20,7 +20,7 @@ extern void WS2812_send_DATA(uint8_t (*color)[3], uint16_t len);
 void SPI_FLASH_SectorErase(uint32_t SectorAddr) //扇区删除
 {
     SPI_FLASH_WriteEnable();
-    SPI_FLASH_WaitForWriteEnd();
+// SPI_FLASH_WaitForWriteEnd();
     W25Q_CS_L;
     SPI_FLASH_SendByte(W25X_SectorErase);
     SPI_FLASH_SendByte((SectorAddr & 0xFF0000) >> 16);
@@ -267,19 +267,22 @@ void W25x16_Test(void)
 //    delay_ms(20);
     
     
-    SPI_FLASH_BulkErase();//全片清空
-    SPI_FLASH_BufferWrite((u8 *)Buffer,FLASH_SectorToErase,8);	
-    SPI_FLASH_BufferWrite((u8 *)Buffer,0X1EFFFF,8);	   
+//    SPI_FLASH_BulkErase();//全片清空
+//    SPI_FLASH_BufferWrite((u8 *)Buffer,FLASH_SectorToErase,8);	
+//    SPI_FLASH_BufferWrite((u8 *)Buffer,0X1EFFFF,8);	   
     memset(Buffer,0,sizeof(Buffer));
     delay_ms(20);
 
     SPI_FLASH_BufferRead((u8 *)Buffer,FLASH_SectorToErase, 8);
+    UART1_SendString( Buffer, 8);
     memset(Buffer,0,sizeof(Buffer));
 
+    
     SPI_FLASH_BufferRead((u8 *)Buffer,0X1EFFFF, 8);
+    UART1_SendString( Buffer, 8);
     memset(Buffer,0,sizeof(Buffer));
     
-    SPI_FLASH_BulkErase();//全片清空
+   // SPI_FLASH_BulkErase();//全片清空
 //    WS2812_send_DATA( Buffer, 16);     
 }
 

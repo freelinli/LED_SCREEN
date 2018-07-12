@@ -18,6 +18,14 @@
   u8 last_time_l;               // 8    每帧持续时间 低位
 
 }Ws2812b_Config_t;
+ 
+typedef struct Ws2812b_Config_ture{
+    u32 data_offset;             // 
+    u16 frames;                  //  
+    u16 last_time;               //  
+    u8 led_pixel;                //  
+
+}Ws2812b_Config_ture_t;
 
 
 /* Private typedef -----------------------------------------------------------*/
