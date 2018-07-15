@@ -15,7 +15,7 @@
 static  u32 TimingDelay;   //定义类型
 
 
-#define TIM1_TIME  1000 //ms
+#define TIM1_TIME  5000 //ms
 
 void Tim1_Init(void)    //定时器1初始化
 {

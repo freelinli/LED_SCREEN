@@ -189,13 +189,9 @@ int frames_decode(u8 *data)
     default:
 
         break;
-
     }
-
     return 1;
-
 }
-
 
 int main(void)
 {
@@ -225,19 +221,21 @@ int main(void)
 
         ++FSM_data.flag_1ms;
 
-        if(++FSM_data.flag_switch > Ws2812b_Config_data_ture.last_time) {
+        if(++FSM_data.flag_switch > (Ws2812b_Config_data_ture.last_time / 5)) {
         
           FSM_data.flag_switch  = 0;
           
           memset(RxBuffer, 0, RxBufferSize);
           SPI_FLASH_BufferRead(RxBuffer, Ws2812b_Config_data_ture.data_offset + Ws2812b_Config_data_ture.led_pixel * 3 * i, Ws2812b_Config_data_ture.led_pixel * 3);
           
-          UART1_SendString( RxBuffer, Ws2812b_Config_data_ture.led_pixel * 3 );
+        //  UART1_SendString( RxBuffer, Ws2812b_Config_data_ture.led_pixel * 3 );
           if( ++i >=  Ws2812b_Config_data_ture.frames)
             i = 0;
+          RST_RGB2_data();
+          WS2812_send_DATA((char *)RxBuffer,  Ws2812b_Config_data_ture.led_pixel );
         
         }
-        if(FSM_data.flag_1ms % 5  == 0) // per 5ms once
+        if(FSM_data.flag_1ms % 1  == 0) // per 5ms once
         {
 
             //-------------------------------------------------------------------------- 5ms start
@@ -281,7 +279,7 @@ int main(void)
             
             //-------------------------------------------------------------------------- 5ms end
 
-            if(FSM_data.flag_1ms % 10  == 0) // per 10ms once
+            if(FSM_data.flag_1ms % 2  == 0) // per 10ms once
             {
                 adc_value = ADC1_Get();
                 //      IWDG_ReloadCounter();
@@ -289,10 +287,10 @@ int main(void)
                 {
                     //  USART1_printf(  "\r\n low power adc = %d \r\n", adc_value);
                 }
-                if(FSM_data.flag_1ms % 100  == 0) // per 100ms once
+                if(FSM_data.flag_1ms % 20  == 0) // per 100ms once
                 {
 
-                    if(FSM_data.flag_1ms % 1000  == 0) // per 1000ms once
+                    if(FSM_data.flag_1ms % 200  == 0) // per 1000ms once
                     {
                         FSM_data.flag_1ms = 0;
                         LED1_TOGGLE;
@@ -327,12 +325,12 @@ void Bsp_Init(void)  //硬件初始化区域
     
  
     //  USART1_printf( "\r\n this is a demo \r\n" );
-    Tim1_Init();
+   Tim1_Init();
     __enable_interrupt();//中断使能
     
     
-   // switch_get_eeprom = 1; // just for debug
-       SPI_FLASH_BufferRead((u8 *)&Ws2812b_Config_data, FLASH_SectorToErase, sizeof(Ws2812b_Config_t)); // 初始化读取信息
+    //switch_get_eeprom = 1; // just for debug
+    SPI_FLASH_BufferRead((u8 *)&Ws2812b_Config_data, FLASH_SectorToErase, sizeof(Ws2812b_Config_t)); // 初始化读取信息
     Ws2812_Config_get();
     
 
@@ -359,9 +357,9 @@ void Bsp_Init(void)  //硬件初始化区域
                 }
             }
       
-      if (FSM_data.flag_1ms > 3001) 
-        FSM_data.flag_1ms =  3001;
-      if((switch_get_eeprom == 0) &&(FSM_data.flag_1ms > 3000)) // 未接受到数据  且 时间超时时间到，则退出
+      if (FSM_data.flag_1ms > 601) 
+        FSM_data.flag_1ms =  601;
+      if((switch_get_eeprom == 0) &&(FSM_data.flag_1ms > 600)) // 未接受到数据  且 时间超时时间到，则退出
         break;
      
       

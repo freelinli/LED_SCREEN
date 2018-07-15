@@ -49,6 +49,7 @@ void RGB_LED_Init(void)
 
 
 /*写入数据时序*/
+#if 0  // 优化情况下，会将相关函数及运算直接以结果出现
 void Send_A_bit(u8 VAL)
 {
   u8 i = 0;
@@ -81,11 +82,60 @@ void Send_A_bit(u8 VAL)
        }           
       
 }
+#else
+
+/*写入数据时序*/
+void Send_A_bit(u8 VAL)
+{
+  u8 i = 0;
+       if (VAL==1)
+       {
+          RGB_LED2_H;
+
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          // delay_800ns;
+          RGB_LED2_L;     
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          //  delay_400ns;
+
+       }
+       else
+       {
+          RGB_LED2_H;
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          // delay_400ns;
+          RGB_LED2_L;        
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          asm(" NOP");
+          //delay_800ns;
+       }           
+      
+}
+#endif
 
 #define TIMING_ONE  1
 #define TIMING_ZERO 0
        //   unsigned char LED_BYTE_Buffer[500]; 
-void WS2812_send_DATA(uint8_t (*color)[3], uint16_t len)
+void WS2812_send_DATA(uint8_t *color, uint16_t len)
 {
  
         uint16_t i= 0, j = 0;
@@ -102,19 +152,19 @@ void WS2812_send_DATA(uint8_t (*color)[3], uint16_t len)
 	{
                         for(i=0; i<8; i++) // GREEN data
 			{
-                           Send_A_bit(((color[j][1]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
+                          Send_A_bit(((color[3 * j + 1]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
 					//LED_BYTE_Buffer[memaddr] = ((color[j][1]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO;
 					//memaddr++;
 			}
 			for(i=0; i<8; i++) // RED
 			{
-                           Send_A_bit(((color[j][0]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
+                           Send_A_bit(((color[3 * j]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
 					//LED_BYTE_Buffer[memaddr] = ((color[j][0]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO;
 					//memaddr++;
 			}
 			for(i=0; i<8; i++) // BLUE
 			{
-                           Send_A_bit(((color[j][2]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
+                           Send_A_bit(((color[3 * j + 2]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
 					//LED_BYTE_Buffer[memaddr] = ((color[j][2]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO;
 					//memaddr++;
 			}

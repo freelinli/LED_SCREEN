@@ -13,7 +13,7 @@
 #include "stm8s.h"
 #include "stm8s_clk.h"
 #include "stm8s_uart1.h"
-#include <stdarg.h>
+//#include <stdarg.h>
 /* ********************************************
 UART1  configured as follow:
   - BaudRate = 115200 baud  

@@ -39,7 +39,7 @@ void LED_ShowOneToOne(void);
 
 
 void RGB_LED_Init(void);
-void WS2812_send_DATA(uint8_t (*color)[3], uint16_t len);
+void WS2812_send_DATA(uint8_t *color, uint16_t len);
 void RST_RGB2_data(void);
 
 void WS2812_send_DATA_R( uint16_t len);

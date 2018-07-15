@@ -6,23 +6,29 @@
 #include "spi.h"
 #include "delay_time.h"
 #include <string.h> 
+#include "uart1.h"
 
 
-extern void WS2812_send_DATA(uint8_t (*color)[3], uint16_t len);
-
-
-
-
+extern void WS2812_send_DATA(uint8_t *color, uint16_t len);
 
 
 //每块（Block）的大小为 64KB，每个扇区（Sector）的大小为 4 KB
 
-void SPI_FLASH_SectorErase(uint32_t SectorAddr) //扇区删除
+void SPI_FLASH_ChipErase(void)
 {
     SPI_FLASH_WriteEnable();
-// SPI_FLASH_WaitForWriteEnd();
     W25Q_CS_L;
-    SPI_FLASH_SendByte(W25X_SectorErase);
+    SPI_FLASH_SendByte(W25X_ChipErase); 
+    W25Q_CS_H;
+    SPI_FLASH_WaitForWriteEnd();
+
+}
+void SPI_FLASH_SectorErase(uint32_t SectorAddr)
+{
+    SPI_FLASH_WriteEnable();
+//    SPI_FLASH_WaitForWriteEnd();
+    W25Q_CS_L;
+    SPI_FLASH_SendByte(W25X_SectorErase); ///  SPI_FLASH_SendByte(W25X_SectorErase); W25X_BlockErase
     SPI_FLASH_SendByte((SectorAddr & 0xFF0000) >> 16);
     SPI_FLASH_SendByte((SectorAddr & 0xFF00) >> 8);
     SPI_FLASH_SendByte(SectorAddr & 0xFF);
@@ -30,7 +36,7 @@ void SPI_FLASH_SectorErase(uint32_t SectorAddr) //扇区删除
     SPI_FLASH_WaitForWriteEnd();
 }
 
-void SPI_FLASH_BulkErase(void) // 片删除
+void SPI_FLASH_BulkErase(void)
 {
   SPI_FLASH_WriteEnable();
   W25Q_CS_L;
@@ -39,7 +45,7 @@ void SPI_FLASH_BulkErase(void) // 片删除
   SPI_FLASH_WaitForWriteEnd();
 }
 
-void SPI_FLASH_PageWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite) //页写入
+void SPI_FLASH_PageWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite)
 {
     SPI_FLASH_WriteEnable();
     
@@ -65,14 +71,14 @@ void SPI_FLASH_PageWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteT
     SPI_FLASH_WaitForWriteEnd();
 }
 
-void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite) //数据buf 写入
+void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite)
 {
   uint8_t NumOfPage = 0, NumOfSingle = 0, Addr = 0, count = 0, temp = 0;
 
   Addr = WriteAddr % SPI_FLASH_PageSize;
   count = SPI_FLASH_PageSize - Addr;
-  NumOfPage =  NumByteToWrite / SPI_FLASH_PageSize;
-  NumOfSingle = NumByteToWrite % SPI_FLASH_PageSize;
+  NumOfPage =  NumByteToWrite / SPI_FLASH_PageSize;     //  if == 0 one page; if > 0 more page 
+  NumOfSingle = NumByteToWrite % SPI_FLASH_PageSize;    //  last page
 
   if (Addr == 0) 
   {
@@ -89,7 +95,7 @@ void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByt
         pBuffer += SPI_FLASH_PageSize;
       }
 
-      SPI_FLASH_PageWrite(pBuffer, WriteAddr, NumOfSingle);
+      SPI_FLASH_PageWrite(pBuffer, WriteAddr, NumOfSingle); // you should read data and  ease and write
     }
   }
   else 
@@ -136,7 +142,7 @@ void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByt
   }
 }
 
-void SPI_FLASH_BufferRead(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead) // 数据buf读出
+void SPI_FLASH_BufferRead(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead)
 {
 
   W25Q_CS_L;
@@ -153,9 +159,10 @@ void SPI_FLASH_BufferRead(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteT
   W25Q_CS_H;
 }
 
-uint32_t SPI_FLASH_ReadID(void)  //读取ID
+uint32_t SPI_FLASH_ReadID(void)
 {
   uint32_t Temp = 0, Temp0 = 0, Temp1 = 0, Temp2 = 0;
+
 
   W25Q_CS_L;
   SPI_FLASH_SendByte(W25X_JedecDeviceID);
@@ -164,10 +171,10 @@ uint32_t SPI_FLASH_ReadID(void)  //读取ID
   Temp2 = SPI_FLASH_SendByte(Dummy_Byte);
   W25Q_CS_H;
   Temp = (Temp0 << 16) | (Temp1 << 8) | Temp2;
-  return Temp; // should be 0x00EF4015
+  return Temp;
 }
 
-uint32_t SPI_FLASH_ReadDeviceID(void) // 读取Device ID
+uint32_t SPI_FLASH_ReadDeviceID(void)
 {
   uint32_t Temp = 0;
 
@@ -190,6 +197,7 @@ void SPI_FLASH_StartReadSequence(uint32_t ReadAddr)
   SPI_FLASH_SendByte((ReadAddr & 0xFF0000) >> 16);
   SPI_FLASH_SendByte((ReadAddr& 0xFF00) >> 8);
   SPI_FLASH_SendByte(ReadAddr & 0xFF);
+  W25Q_CS_H;
 }
 
 uint8_t SPI_FLASH_ReadByte(void)
@@ -217,9 +225,8 @@ void SPI_FLASH_WriteDisable(void)
   W25Q_CS_L;
   SPI_FLASH_SendByte(W25X_WriteDisable);
   W25Q_CS_H;
+
 }
-
-
 
 void SPI_FLASH_WaitForWriteEnd(void)
 {
