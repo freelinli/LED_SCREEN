@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=91369825
+Checksum=-1134080016
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -55,6 +55,8 @@ Enabled=0
 ShowSource=1
 [Simulator]
 Freq=16000000
+[array_types]
+Fmt0=u8[256]	4	0
 [watch_formats]
 Fmt0={W}1:color[3 * j + 2]	4	0
 [DataSample]
@@ -63,7 +65,8 @@ GraphEnabled=0
 ShowTimeLog=1
 ShowTimeSum=1
 [Breakpoints]
-Count=0
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\BSP\w25x16.c}.264.8" 1 0 0 0 "" 0 ""
+Count=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""

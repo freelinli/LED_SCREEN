@@ -144,7 +144,7 @@ void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByt
 
 void SPI_FLASH_BufferRead(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead)
 {
-
+ SPI_FLASH_WriteEnable();
   W25Q_CS_L;
   SPI_FLASH_SendByte(W25X_ReadData);
   SPI_FLASH_SendByte((ReadAddr & 0xFF0000) >> 16);
@@ -157,6 +157,7 @@ void SPI_FLASH_BufferRead(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteT
     pBuffer++;
   }
   W25Q_CS_H;
+   SPI_FLASH_WriteDisable();
 }
 
 uint32_t SPI_FLASH_ReadID(void)
@@ -255,9 +256,11 @@ void SPI_Flash_WAKEUP(void)
   W25Q_CS_H;
 }   
 
+#define STRING1 "abcdefg"
+#define STRING2 "1234567"
 void W25x16_Test(void)
 {
-    u8 Buffer[8] = "abcdefg";
+    u8 Buffer[8] = STRING2;
     if(SPI_FLASH_ReadID() != 0xEF4015)
         return ;
     if(SPI_FLASH_ReadDeviceID() != 0x14) // 14 <---> W25Q16   -->16 @2M
@@ -272,25 +275,28 @@ void W25x16_Test(void)
 //    delay_ms(20);
 //    SPI_FLASH_BufferRead((u8 *)Buffer,FLASH_SectorToErase + 2, 6);
 //    delay_ms(20);
-    
+        delay_ms(200);
     
 //    SPI_FLASH_BulkErase();//全片清空
+//    SPI_FLASH_SectorErase(FLASH_SectorToErase);
 //    SPI_FLASH_BufferWrite((u8 *)Buffer,FLASH_SectorToErase,8);	
 //    SPI_FLASH_BufferWrite((u8 *)Buffer,0X1EFFFF,8);	   
     memset(Buffer,0,sizeof(Buffer));
-    delay_ms(20);
+    delay_ms(200);
 
     SPI_FLASH_BufferRead((u8 *)Buffer,FLASH_SectorToErase, 8);
     UART1_SendString( Buffer, 8);
     memset(Buffer,0,sizeof(Buffer));
 
     
-    SPI_FLASH_BufferRead((u8 *)Buffer,0X1EFFFF, 8);
-    UART1_SendString( Buffer, 8);
-    memset(Buffer,0,sizeof(Buffer));
+//    SPI_FLASH_BufferRead((u8 *)Buffer,0X1EFFFF, 8);
+//    UART1_SendString( Buffer, 8);
+//    memset(Buffer,0,sizeof(Buffer));
     
    // SPI_FLASH_BulkErase();//全片清空
-//    WS2812_send_DATA( Buffer, 16);     
+//    WS2812_send_DATA( Buffer, 16);  
+     UART1_SendString( "while 1", 8);
+    while(1);
 }
 
 void W25x16_Save_Ws2812b_Config(void) // 应该以传参方式 todo

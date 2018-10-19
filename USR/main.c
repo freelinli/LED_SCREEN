@@ -234,6 +234,7 @@ int main(void)
           RST_RGB2_data();
           WS2812_send_DATA((char *)RxBuffer,  Ws2812b_Config_data_ture.led_pixel );
         
+    //      while(1);
         }
         if(FSM_data.flag_1ms % 1  == 0) // per 5ms once
         {
@@ -268,11 +269,11 @@ int main(void)
                 key_status_all.shake_key_status = Shake_Key_Scan(Shake_Key_Port, Shake_Key_Pin);
                 if(key_status_all.shake_key_status == 1)
                 {
-                    //LED1(0);
+//                    LED1(0);
                 }
                 else  if(key_status_all.shake_key_status == 2)
                 {
-                    //LED1(1);
+//                    LED1(1);
                 }
 
             }
@@ -323,13 +324,13 @@ void Bsp_Init(void)  //硬件初始化区域
     Uart_Init(); // 115200
     UART1_SendString( "\r\n this is a demo \r\n", sizeof("\r\n this is a demo \r\n") );
     
- 
+     W25x16_Test();
     //  USART1_printf( "\r\n this is a demo \r\n" );
    Tim1_Init();
     __enable_interrupt();//中断使能
     
     
-    //switch_get_eeprom = 1; // just for debug
+   // switch_get_eeprom = 1; // just for debug
     SPI_FLASH_BufferRead((u8 *)&Ws2812b_Config_data, FLASH_SectorToErase, sizeof(Ws2812b_Config_t)); // 初始化读取信息
     Ws2812_Config_get();
     
