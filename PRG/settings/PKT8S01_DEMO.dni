@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=-1134080016
+Checksum=-1929674629
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -64,9 +64,6 @@ LogEnabled=0
 GraphEnabled=0
 ShowTimeLog=1
 ShowTimeSum=1
-[Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\BSP\w25x16.c}.264.8" 1 0 0 0 "" 0 ""
-Count=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -74,6 +71,9 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\BSP\w25x16.c}.280.9" 1 0 0 0 "" 0 ""
+Count=1
 [Aliases]
 Count=0
 SuppressDialog=0

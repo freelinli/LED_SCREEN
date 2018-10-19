@@ -258,9 +258,11 @@ void SPI_Flash_WAKEUP(void)
 
 #define STRING1 "abcdefg"
 #define STRING2 "1234567"
+
+//#define TRY_WRITE 
 void W25x16_Test(void)
 {
-    u8 Buffer[8] = STRING2;
+    u8 Buffer[8] = STRING1;
     if(SPI_FLASH_ReadID() != 0xEF4015)
         return ;
     if(SPI_FLASH_ReadDeviceID() != 0x14) // 14 <---> W25Q16   -->16 @2M
@@ -276,11 +278,12 @@ void W25x16_Test(void)
 //    SPI_FLASH_BufferRead((u8 *)Buffer,FLASH_SectorToErase + 2, 6);
 //    delay_ms(20);
         delay_ms(200);
-    
+#ifdef TRY_WRITE
 //    SPI_FLASH_BulkErase();//È«Æ¬Çå¿Õ
-//    SPI_FLASH_SectorErase(FLASH_SectorToErase);
-//    SPI_FLASH_BufferWrite((u8 *)Buffer,FLASH_SectorToErase,8);	
-//    SPI_FLASH_BufferWrite((u8 *)Buffer,0X1EFFFF,8);	   
+    SPI_FLASH_SectorErase(FLASH_SectorToErase);
+    SPI_FLASH_BufferWrite((u8 *)Buffer,FLASH_SectorToErase,8);	
+//    SPI_FLASH_BufferWrite((u8 *)Buffer,0X1EFFFF,8);	
+#endif
     memset(Buffer,0,sizeof(Buffer));
     delay_ms(200);
 
