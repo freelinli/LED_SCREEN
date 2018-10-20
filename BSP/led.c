@@ -10,6 +10,7 @@
 
 #include "led.h"
 #include "delay_time.h"
+#include <stdlib.h>
 
 void LED_Init(void)
 {
@@ -134,52 +135,42 @@ void Send_A_bit(u8 VAL)
 
 #define TIMING_ONE  1
 #define TIMING_ZERO 0
-       //   unsigned char LED_BYTE_Buffer[500]; 
+    
+
+
 void WS2812_send_DATA(uint8_t *color, uint16_t len)
 {
  
         uint16_t i= 0, j = 0;
- 
-       // uint16_t buf_len = len * 24;
-    
-      //   unsigned char *LED_BYTE_Buffer;
-        // LED_BYTE_Buffer =  (unsigned char *)malloc(buf_len);
-        // if(LED_BYTE_Buffer ==  NULL)
-        //   return;
-        // memset(LED_BYTE_Buffer, 0,buf_len);
        
+        RST_RGB2_data();                // 先进行复位清零
 	while ( j < len)
 	{
                         for(i=0; i<8; i++) // GREEN data
 			{
                           Send_A_bit(((color[3 * j + 1]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
-					//LED_BYTE_Buffer[memaddr] = ((color[j][1]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO;
-					//memaddr++;
 			}
 			for(i=0; i<8; i++) // RED
 			{
-                           Send_A_bit(((color[3 * j]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
-					//LED_BYTE_Buffer[memaddr] = ((color[j][0]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO;
-					//memaddr++;
+                           Send_A_bit(((color[3 * j]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);	
 			}
 			for(i=0; i<8; i++) // BLUE
 			{
                            Send_A_bit(((color[3 * j + 2]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO);
-					//LED_BYTE_Buffer[memaddr] = ((color[j][2]<<i) & 0x80) ? TIMING_ONE:TIMING_ZERO;
-					//memaddr++;
 			}
 			
 		  j++;
 	}
-      //  j = 0;
-       
-      //  while ( j < buf_len )
-      //  {
-       //     Send_A_bit(LED_BYTE_Buffer[j++]);
-     //   }
-        
-    //  free(LED_BYTE_Buffer);
-  
+             RST_RGB2_data();                // 结束发送数据
+}
+
+void WS2812_erase_LED(uint16_t pixel)
+{
+  delay_ms(10);
+  uint8_t *color  = (uint8_t *)malloc(pixel * 3);
+  memset(color, 0x00, (pixel * 3));
+  WS2812_send_DATA(color, pixel);
+  free(color);
 }
 
 void WS2812_send_DATA_R( uint16_t len)
@@ -232,7 +223,7 @@ void WS2812_send_DATA_R( uint16_t len)
 void RST_RGB2_data(void)
 {
   RGB_LED2_L;
-  delay_us(120);//延时1秒
+  delay_us(200);//延时1秒
     
 }
 

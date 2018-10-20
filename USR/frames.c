@@ -9,9 +9,8 @@
 **********************************************************************************/
 
 #include "head.h"
+#include "frames.h"
 
-
-extern Ws2812b_Config_t Ws2812b_Config_data;
 extern Ws2812b_Config_ture_t Ws2812b_Config_data_ture;
 
 
@@ -24,20 +23,28 @@ u8  switch_get_eeprom = 0;
 
 
 
-void Ws2812_Config_set( Ws2812b_Config_ture_t Ws2812b_Config_data)
+void Ws2812_Config_set( Ws2812b_Config_ture_t data)
 {
-    Ws2812b_Config_data_ture.data_offset =  Ws2812b_Config_data.data_offset;
-    Ws2812b_Config_data_ture.frames = Ws2812b_Config_data.frames;
-    Ws2812b_Config_data_ture.last_time = Ws2812b_Config_data.last_time;
-    Ws2812b_Config_data_ture.led_pixel = Ws2812b_Config_data.led_pixel;
+
+    Ws2812b_Config_data_ture.data_offset =  data.data_offset;
+    Ws2812b_Config_data_ture.frames = data.frames;
+    Ws2812b_Config_data_ture.last_time = data.last_time;
+    Ws2812b_Config_data_ture.led_pixel = data.led_pixel;
+    
+
 }
 
-void Ws2812_Config_get( Ws2812b_Config_ture_t* Ws2812b_Config_data_ture )
+void Ws2812_Config_get( Ws2812b_Config_ture_t* data )
 {
-    Ws2812b_Config_data_ture->data_offset = ( Ws2812b_Config_data.data_offset_h << 16 ) + ( Ws2812b_Config_data.data_offset_m << 8 ) + Ws2812b_Config_data.data_offset_l;
-    Ws2812b_Config_data_ture->frames = ( Ws2812b_Config_data.frames_h << 8 ) + Ws2812b_Config_data.frames_l;
-    Ws2812b_Config_data_ture->last_time = ( Ws2812b_Config_data.last_time_h << 8 ) + Ws2812b_Config_data.last_time_l;
-    Ws2812b_Config_data_ture->led_pixel = Ws2812b_Config_data.led_pixel;
+#if 1
+  data = &Ws2812b_Config_data_ture;
+#else
+//    采用指针方式，则需要修改，防止内存异常
+//    Ws2812b_Config_data_ture->data_offset = ( Ws2812b_Config_data.data_offset_h << 16 ) + ( Ws2812b_Config_data.data_offset_m << 8 ) + Ws2812b_Config_data.data_offset_l;
+//    Ws2812b_Config_data_ture->frames = ( Ws2812b_Config_data.frames_h << 8 ) + Ws2812b_Config_data.frames_l;
+//    Ws2812b_Config_data_ture->last_time = ( Ws2812b_Config_data.last_time_h << 8 ) + Ws2812b_Config_data.last_time_l;
+//    Ws2812b_Config_data_ture->led_pixel = Ws2812b_Config_data.led_pixel;
+#endif
 }
 
 static u16 checkSumData( u8* showdata, int temp_hex_len ) //校验和
@@ -113,6 +120,7 @@ int frames_decode( u8* data )
 
             }Ws2812b_Config_t;
             */
+            Ws2812b_Config_t Ws2812b_Config_data;
             memcpy( &Ws2812b_Config_data, data + 3, 8 );
             Ws2812_Config_get( &Ws2812b_Config_data_ture );
             SPI_FLASH_BufferWrite( ( u8* )&Ws2812b_Config_data, FLASH_SectorToErase, sizeof( Ws2812b_Config_t ) );

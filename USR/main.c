@@ -32,8 +32,10 @@ int main( void )
     CLK_HSIPrescalerConfig( CLK_PRESCALER_HSIDIV1 );
     /*全局硬件初始化*/
     Bsp_Init();
+    /*全局参数初始化*/
+    Bsp_data_Init();
     //      RGB_data = (u8 *)malloc(Ws2812b_Config_data_ture.led_pixel * 3);
-    while( 1 )
+    while( 1 );
     {
         //  LED_ShowOneToOne();
         ++FSM_data.flag_1ms;
@@ -43,14 +45,14 @@ int main( void )
             memset( RxBuffer, 0, RxBufferSize );
             SPI_FLASH_BufferRead( RxBuffer, Ws2812b_Config_data_ture.data_offset + Ws2812b_Config_data_ture.led_pixel * 3 * i, \
                                   Ws2812b_Config_data_ture.led_pixel * 3 );
-            //  UART1_SendString( RxBuffer, Ws2812b_Config_data_ture.led_pixel * 3 );
             if( ++i >=  Ws2812b_Config_data_ture.frames )
             {
                 i = 0;
             }
-            RST_RGB2_data();
+            //print_by_hex(RxBuffer,  Ws2812b_Config_data_ture.led_pixel * 3 );
             WS2812_send_DATA( ( char* )RxBuffer,  Ws2812b_Config_data_ture.led_pixel );
-            //      while(1);
+            print_by_hex(RxBuffer,  1 );
+             USART1_printf(  "OK", 2);
         }
         if( FSM_data.flag_1ms % 1  == 0 ) // per 5ms once
         {

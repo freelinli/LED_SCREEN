@@ -44,24 +44,23 @@ void Bsp_data_Init( void )
     Ws2812b_Config_data.last_time = 1000;
     Ws2812b_Config_data.data_offset = FLASH_SectorToErase;
     Ws2812_Config_set( Ws2812b_Config_data );
-            // 清理并写入测试数据
-                SPI_FLASH_BulkErase();
-                memset( Buffer, 0x0f, sizeof( Buffer ) );
-                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
-                memset( Buffer, 0x05, sizeof( Buffer ) );
-                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 120, sizeof( Buffer ) );
-                memset( Buffer, 0x25, sizeof( Buffer ) );
-                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
-            // 读取数据进行检验
-                memset( Buffer, 0x00, sizeof( Buffer ) );
-                SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
-                print_by_hex( Buffer,  sizeof( Buffer ) );
-                memset( Buffer, 0x00, sizeof( Buffer ) );
-                SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase + 120, sizeof( Buffer ) );
-                print_by_hex( Buffer,  sizeof( Buffer ) );
-                memset( Buffer, 0x00, sizeof( Buffer ) );
-                SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
-                print_by_hex( Buffer,  sizeof( Buffer ) );
+    // 清理并写入测试数据
+    //    SPI_FLASH_BulkErase();
+    //    memset( Buffer, 0x0f, sizeof( Buffer ) );
+    //    SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
+    //    memset( Buffer, 0xf0, sizeof( Buffer ) );
+    //    SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 120, sizeof( Buffer ) );
+    //    memset( Buffer, 0x55, sizeof( Buffer ) );
+    //    SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
+    memset( Buffer, 0x00, sizeof( Buffer ) );
+    SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
+  print_by_hex(Buffer,  sizeof( Buffer ) );
+    memset( Buffer, 0x00, sizeof( Buffer ) );
+    SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase + 120, sizeof( Buffer ) );
+  print_by_hex(Buffer,  sizeof( Buffer ) );
+    memset( Buffer, 0x00, sizeof( Buffer ) );
+    SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
+    print_by_hex(Buffer,  sizeof( Buffer ) );
 }
 
 #define BSP_INIT_STRING "BSP_INIT ......"
@@ -126,21 +125,11 @@ void Bsp_Init( void ) //硬件初始化区域
     //W25x16_Test();
     //W25x16_Save_Ws2812b_Config();
     //IWDG_ReloadCounter();
-#ifdef BSP_INIT_PRINT
-    USART1_printf( "\r\n RGB_LED_Init OVER\r\n" );
-#endif
     LED_Init();
-    WS2812_erase_LED(Ws2812b_Config_data_ture.led_pixel);
-#ifdef BSP_INIT_PRINT
-    USART1_printf( "\r\n LED_Init OVER\r\n" );
-#endif
     Buttom_Init();
     Shake_Key_Init();
     ADC1_Config();
     Set_Beep_OptionByte();
-#ifdef BSP_INIT_PRINT
-    USART1_printf( "\r\n Set_Beep_OptionByte OVER \r\n" );
-#endif
     //        Beep_Test();
 }
 

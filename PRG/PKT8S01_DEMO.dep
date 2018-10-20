@@ -136,6 +136,7 @@
       <file>$TOOLKIT_DIR$\inc\c\stdarg.h</file>
       <file>$PROJ_DIR$\..\USR\frames.h</file>
       <file>$PROJ_DIR$\..\README.md</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdlib.h</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\..\[ROOT_NODE]</name>
@@ -253,11 +254,7 @@
       <inputs>
         <tool>
           <name>ICCSTM8</name>
-          <file> 39 57 59 61 58 73 65</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 61 58 57 65 59 39 73</file>
+          <file> 39 57 59 61 58 73 65 130 85 108 117 64 112 114 111 109</file>
         </tool>
       </inputs>
     </file>
@@ -277,10 +274,6 @@
         <tool>
           <name>ICCSTM8</name>
           <file> 35 59 61 58 57 73 41</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 61 73 41 59 57 35 58</file>
         </tool>
       </inputs>
     </file>
@@ -326,7 +319,7 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 117 112 59 58 110 85 116 127 109 111 64 108 80 61 73 57 113 114</file>
+          <file> 117 112 59 58 85 116 127 110 109 111 64 108 80 61 73 57 113 114</file>
         </tool>
       </inputs>
     </file>
@@ -669,10 +662,6 @@
           <name>ICCSTM8</name>
           <file> 59 61 58 57 73 65 91 39 74 37 29 97 80 110 85 108 117 64 112 114 111 109 113 60 34 83 41 30 124 94</file>
         </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 59 83 57 114 64 85 91 58 29 94 110 109 111 108 65 74 60 30 112 61 73 39 37 80 34 41 124 97 113 117</file>
-        </tool>
       </inputs>
     </file>
     <file>
@@ -739,10 +728,6 @@
           <name>ICCSTM8</name>
           <file> 91 39 57 59 61 58 73 74 37 29 97 80 110 85 108 117 64 112 114 111 109 113 60 34 83 41 30 124 94 65</file>
         </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 74 30 110 60 57 61 73 59 109 111 108 29 83 94 114 64 85 65 39 37 80 34 41 124 112 91 58 97 113 117</file>
-        </tool>
       </inputs>
     </file>
     <file>
@@ -760,11 +745,7 @@
       <inputs>
         <tool>
           <name>ICCSTM8</name>
-          <file> 91 39 57 59 61 58 73 74 37 29 97 80 110 85 108 117 64 112 114 111 109 113 60 34 83 41 30 124 94</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 60 113 74 30 57 58 59 29 83 94 114 85 39 37 80 34 41 124 108 91 61 73 97 110 109 117 111 64 112</file>
+          <file> 91 39 57 59 61 58 73 74 37 29 97 80 110 85 108 117 64 112 114 111 109 113 60 34 83 41 30 124 94 128</file>
         </tool>
       </inputs>
     </file>

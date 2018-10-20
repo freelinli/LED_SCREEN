@@ -259,7 +259,7 @@ void W25x16_Test( void )
     //    delay_ms(20);
     //    SPI_FLASH_BufferRead((u8 *)Buffer,FLASH_SectorToErase + 2, 6);
     //    delay_ms(20);
-    delay_ms( 200 );
+   
     
 #ifdef TRY_WRITE
     //    SPI_FLASH_BulkErase();//È«Æ¬Çå¿Õ

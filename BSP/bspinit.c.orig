@@ -13,8 +13,6 @@
 
 
 
-Ws2812b_Config_t Ws2812b_Config_data;
-
 
 /* Extern defines -----------------------------------------------------------*/
 
@@ -23,6 +21,7 @@ extern u8       RxBuffer[RxBufferSize];
 extern u16      UART_RX_NUM;
 extern u8       switch_get_eeprom;
 
+extern Ws2812b_Config_ture_t Ws2812b_Config_data_ture;
 
 
 #define BSP_TEST
@@ -30,25 +29,55 @@ extern u8       switch_get_eeprom;
 #ifdef BSP_TEST
 
 
-//#define BSP_INIT_PRINT
+#define BSP_INIT_PRINT
 
 
 #endif
+
+
+void Bsp_data_Init( void )
+{
+    u8 Buffer[120];
+    Ws2812b_Config_ture_t Ws2812b_Config_data;
+    Ws2812b_Config_data.led_pixel = 40; // 40个像素点  40个灯
+    Ws2812b_Config_data.frames = 3;
+    Ws2812b_Config_data.last_time = 1000;
+    Ws2812b_Config_data.data_offset = FLASH_SectorToErase;
+    Ws2812_Config_set( Ws2812b_Config_data );
+//        // 清理并写入测试数据
+//            SPI_FLASH_BulkErase();
+//            memset( Buffer, 0x0f, sizeof( Buffer ) );
+//            SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
+//            memset( Buffer, 0x05, sizeof( Buffer ) );
+//            SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 120, sizeof( Buffer ) );
+//            memset( Buffer, 0x25, sizeof( Buffer ) );
+//            SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
+//        // 读取数据进行检验
+//            memset( Buffer, 0x00, sizeof( Buffer ) );
+//            SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
+//            print_by_hex( Buffer,  sizeof( Buffer ) );
+//            memset( Buffer, 0x00, sizeof( Buffer ) );
+//            SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase + 120, sizeof( Buffer ) );
+//            print_by_hex( Buffer,  sizeof( Buffer ) );
+//            memset( Buffer, 0x00, sizeof( Buffer ) );
+//            SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
+//            print_by_hex( Buffer,  sizeof( Buffer ) );
+}
+
+#define BSP_INIT_STRING "BSP_INIT ......"
 
 void Bsp_Init( void ) //硬件初始化区域
 {
     struct FSM_t FSM_data = {0, 0, 0, 0, 0};
     u16 temp_move;
-    delay_ms( 100 ); //延时100ms 尝试等待稳定
-    
     SPI_Configation();
-    
-    Uart_Init(); // 115200
-    UART1_SendString( "\r\n this is a demo \r\n", sizeof( "\r\n this is a demo \r\n" ) );
+    Uart_Init( 115200 );              // 115200
+    UART1_SendString( BSP_INIT_STRING, sizeof( BSP_INIT_STRING ) );
 #ifdef BSP_INIT_PRINT
     USART1_printf( "\r\n Uart_Init over \r\n" );
 #endif
-    W25x16_Test();
+    //    delay_ms( 100 );            //延时100ms 尝试等待稳定
+    //    W25x16_Test();
 #ifdef BSP_INIT_PRINT
     USART1_printf( "\r\n W25x16_Test over \r\n" );
 #endif
@@ -58,9 +87,10 @@ void Bsp_Init( void ) //硬件初始化区域
     USART1_printf( "\r\n Tim1_Init over __enable_interrupt \r\n" );
 #endif
     // switch_get_eeprom = 1; // just for debug
-    SPI_FLASH_BufferRead( ( u8* )&Ws2812b_Config_data, FLASH_SectorToErase, sizeof( Ws2812b_Config_t ) ); // 初始化读取信息
-    Ws2812_Config_get();
-    while( 1 )
+    //    SPI_FLASH_BufferRead( ( u8* )&Ws2812b_Config_data, FLASH_SectorToErase, sizeof( Ws2812b_Config_t ) ); // 初始化读取信息
+    Ws2812_Config_get( &Ws2812b_Config_data_ture );
+    // 初始状态下，进行数据监测，如果含有，则进入烧录模式
+    while( 0 )
     {
         ++FSM_data.flag_1ms;
         if( UART_RX_NUM > 4 )
@@ -92,24 +122,25 @@ void Bsp_Init( void ) //硬件初始化区域
         flag_tim1_time = 0;
     }
     RGB_LED_Init();
-    //  IWDOG_Init();
+    //IWDOG_Init();
     //W25x16_Test();
-    // W25x16_Save_Ws2812b_Config();
-    // IWDG_ReloadCounter();
+    //W25x16_Save_Ws2812b_Config();
+    //IWDG_ReloadCounter();
+#ifdef BSP_INIT_PRINT
+    USART1_printf( "\r\n RGB_LED_Init OVER\r\n" );
+#endif
     LED_Init();
+        RST_RGB2_data();                // 先进行复位清零
+#ifdef BSP_INIT_PRINT
+    USART1_printf( "\r\n LED_Init OVER\r\n" );
+#endif
     Buttom_Init();
     Shake_Key_Init();
     ADC1_Config();
-    //        while(1){
-    //          delay_ms(400);//延时1秒
-    //          RST_RGB2_data();
-    //          WS2812_send_DATA(color_data, 40);
-    //          delay_ms(400);//延时1秒
-    //
-    //          RST_RGB2_data();
-    //          WS2812_send_DATA(color_data1, 40);
-    //        }
     Set_Beep_OptionByte();
+#ifdef BSP_INIT_PRINT
+    USART1_printf( "\r\n Set_Beep_OptionByte OVER \r\n" );
+#endif
     //        Beep_Test();
 }
 
