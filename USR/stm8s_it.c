@@ -35,9 +35,9 @@
 #include "stm8s_uart1.h"
 #include "uart1.h" 
 #include <string.h>
-unsigned int flag_tim1_time = 0;
-
-
+    
+    
+u16 flag_tim1_time = 0;
 u8 RxBuffer[RxBufferSize];
 u16 UART_RX_NUM=0;
 u8  flag_uart_start_recv = 0;

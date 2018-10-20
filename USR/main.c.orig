@@ -1,8 +1,8 @@
 
 /******************** (C) COPYRIGHT  freelin *************************************
  * 文件名  ：main.c
- * 描述    ：STM8S LED SCREEN
- * 实验平台： STM8
+ * 描述    ：STM8S工程模板
+ * 实验平台： STM8开发板
  * 库版本  ：V1.0.0
  * 技术支持：wechat(17612172119)
  * 修改时间：2016-08-25
@@ -14,14 +14,21 @@
 #include "head.h"
 
 /* Extern defines -----------------------------------------------------------*/
+
 extern u16 flag_tim1_time ;
 extern u8 RxBuffer[RxBufferSize];
 extern u16 UART_RX_NUM;
+
 
 /* Private defines -----------------------------------------------------------*/
 
 key_status_t  key_status_all;
 Ws2812b_Config_ture_t Ws2812b_Config_data_ture;
+
+
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+
 
 int main( void )
 {
@@ -41,15 +48,15 @@ int main( void )
         {
             FSM_data.flag_switch  = 0;
             memset( RxBuffer, 0, RxBufferSize );
-            SPI_FLASH_BufferRead( RxBuffer, Ws2812b_Config_data_ture.data_offset + Ws2812b_Config_data_ture.led_pixel * 3 * i, \
-                                  Ws2812b_Config_data_ture.led_pixel * 3 );
+            SPI_FLASH_BufferRead(RxBuffer, Ws2812b_Config_data_ture.data_offset + Ws2812b_Config_data_ture.led_pixel * 3 * i, \
+              Ws2812b_Config_data_ture.led_pixel * 3 );
             //  UART1_SendString( RxBuffer, Ws2812b_Config_data_ture.led_pixel * 3 );
             if( ++i >=  Ws2812b_Config_data_ture.frames )
             {
                 i = 0;
             }
             RST_RGB2_data();
-            WS2812_send_DATA( ( char* )RxBuffer,  Ws2812b_Config_data_ture.led_pixel );
+            WS2812_send_DATA(( char* )RxBuffer,  Ws2812b_Config_data_ture.led_pixel );
             //      while(1);
         }
         if( FSM_data.flag_1ms % 1  == 0 ) // per 5ms once
@@ -74,8 +81,8 @@ int main( void )
                 {
                 }
             }
-            {
-                // 摇晃处理事件
+            {  // 摇晃处理事件 
+              
                 key_status_all.shake_key_status = Shake_Key_Scan( Shake_Key_Port, Shake_Key_Pin );
                 if( key_status_all.shake_key_status == 1 )
                 {

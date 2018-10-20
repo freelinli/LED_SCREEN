@@ -1,11 +1,11 @@
-/******************** (C) COPYRIGHT  奇来科技 *************************************
+/******************** (C) COPYRIGHT  freelin *************************************
  * 文件名  ：main.c
  * 描述    ：按键扫描程序    
  * 实验平台： STM8开发板
  * 库版本  ：V1.0.0
- * 技术支持：lijinnan@qiqirobot.com
+ * 技术支持：wechat(17612172119)
  * 修改时间：2016-08-25
- * 淘宝网址：https://lsqrd.taobao.com/index.htm?spm=2013.1.w5002-7895914584.2.kYLHaf
+
 **********************************************************************************/
 
 #include "key_scan.h"
@@ -130,4 +130,4 @@ uint8_t Shake_Key_Scan(GPIO_TypeDef* GPIOx,GPIO_Pin_TypeDef Buttom)
 
 
 
-/******************* (C) COPYRIGHT 奇来科技 *****END OF FILE****/
+/******************* (C) COPYRIGHT freelin *****END OF FILE****/

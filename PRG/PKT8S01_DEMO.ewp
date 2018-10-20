@@ -671,7 +671,7 @@
         </option>
         <option>
           <name>IlinkProgramEntryLabelSelect</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkProgramEntryLabel</name>
@@ -1600,6 +1600,9 @@
       <name>$PROJ_DIR$\..\BSP\beep.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\BSP\bspinit.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\BSP\idog.c</name>
     </file>
     <file>
@@ -1663,13 +1666,19 @@
   <group>
     <name>readme</name>
     <file>
-      <name>$PROJ_DIR$\..\README\&#x4F8B;&#x7A0B;&#x529F;&#x80FD;&#x8BF4;&#x660e;.txt</name>
+      <name>$PROJ_DIR$\..\README\introduce.txt</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\README.md</name>
     </file>
   </group>
   <group>
     <name>usr</name>
     <file>
       <name>$PROJ_DIR$\..\USR\delay_time.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\USR\frames.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\USR\main.c</name>
