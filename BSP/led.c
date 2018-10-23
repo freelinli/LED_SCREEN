@@ -138,6 +138,15 @@ void Send_A_bit(u8 VAL)
     
 
 
+// 00 : 灯光关闭
+// ff :  白色灯光，最亮
+//  红色 #FF0000
+//  黄色 #FFFF00
+//  绿色 #00FF00
+//  蓝色 #0000FF
+
+
+
 void WS2812_send_DATA(uint8_t *color, uint16_t len)
 {
  

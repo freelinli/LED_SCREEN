@@ -32,10 +32,12 @@ int main( void )
     CLK_HSIPrescalerConfig( CLK_PRESCALER_HSIDIV1 );
     /*全局硬件初始化*/
     Bsp_Init();
+    /*等待系统稳定*/
+    delay_ms( 100 );
     /*全局参数初始化*/
     Bsp_data_Init();
-    //      RGB_data = (u8 *)malloc(Ws2812b_Config_data_ture.led_pixel * 3);
-    while( 1 );
+
+    while( 1 )
     {
         //  LED_ShowOneToOne();
         ++FSM_data.flag_1ms;
@@ -50,9 +52,10 @@ int main( void )
                 i = 0;
             }
             //print_by_hex(RxBuffer,  Ws2812b_Config_data_ture.led_pixel * 3 );
-            WS2812_send_DATA( ( char* )RxBuffer,  Ws2812b_Config_data_ture.led_pixel );
-            print_by_hex(RxBuffer,  1 );
-             USART1_printf(  "OK", 2);
+//            WS2812_send_DATA( ( char* )RxBuffer,  Ws2812b_Config_data_ture.led_pixel );
+              WS2812_send_DATA( ( char* )RxBuffer,  3);
+            print_by_hex( RxBuffer,  1 );
+            USART1_printf( "OK", 2 );
         }
         if( FSM_data.flag_1ms % 1  == 0 ) // per 5ms once
         {

@@ -45,13 +45,13 @@ void Bsp_data_Init( void )
     Ws2812b_Config_data.data_offset = FLASH_SectorToErase;
     Ws2812_Config_set( Ws2812b_Config_data );
             // 清理并写入测试数据
-                SPI_FLASH_BulkErase();
-                memset( Buffer, 0x0f, sizeof( Buffer ) );
-                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
-                memset( Buffer, 0x05, sizeof( Buffer ) );
-                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 120, sizeof( Buffer ) );
-                memset( Buffer, 0x25, sizeof( Buffer ) );
-                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
+//                SPI_FLASH_BulkErase();
+//                memset( Buffer, 0x0f, sizeof( Buffer ) );
+//                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
+//                memset( Buffer, 0x05, sizeof( Buffer ) );
+//                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 120, sizeof( Buffer ) );
+//                memset( Buffer, 0x25, sizeof( Buffer ) );
+//                SPI_FLASH_BufferWrite( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
             // 读取数据进行检验
                 memset( Buffer, 0x00, sizeof( Buffer ) );
                 SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase, sizeof( Buffer ) );
@@ -62,6 +62,8 @@ void Bsp_data_Init( void )
                 memset( Buffer, 0x00, sizeof( Buffer ) );
                 SPI_FLASH_BufferRead( ( u8* )Buffer, FLASH_SectorToErase + 240, sizeof( Buffer ) );
                 print_by_hex( Buffer,  sizeof( Buffer ) );
+                
+          
 }
 
 #define BSP_INIT_STRING "BSP_INIT ......"
@@ -73,6 +75,8 @@ void Bsp_Init( void ) //硬件初始化区域
     SPI_Configation();
     Uart_Init( 115200 );              // 115200
     UART1_SendString( BSP_INIT_STRING, sizeof( BSP_INIT_STRING ) );
+    
+
 #ifdef BSP_INIT_PRINT
     USART1_printf( "\r\n Uart_Init over \r\n" );
 #endif
@@ -141,6 +145,7 @@ void Bsp_Init( void ) //硬件初始化区域
 #ifdef BSP_INIT_PRINT
     USART1_printf( "\r\n Set_Beep_OptionByte OVER \r\n" );
 #endif
+
     //        Beep_Test();
 }
 

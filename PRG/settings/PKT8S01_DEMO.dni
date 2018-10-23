@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=-284914894
+Checksum=-724193426
 [CodeCoverage]
 Enabled=_ 0
 [Stack]
@@ -64,8 +64,6 @@ LogEnabled=0
 GraphEnabled=0
 ShowTimeLog=1
 ShowTimeSum=1
-[Breakpoints]
-Count=0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -73,6 +71,11 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\USR\main.c}.127.1" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\USR\main.c}.127.1" 1 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\USR\main.c}.127.5" 1 0 0 0 "" 0 ""
+Count=3
 [Aliases]
 Count=0
 SuppressDialog=0
